@@ -1,4 +1,3 @@
-// dock.js - Advanced macOS Dock with Physics-based Animation
 class MacOSDock {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
@@ -6,8 +5,7 @@ class MacOSDock {
         this.icons = [];
         this.mouseX = null;
         
-        // Animation parameters (tuned for macOS-like feel)
-        this.baseWidth = 52; // Base icon size in pixels
+        this.baseWidth = 52;
         this.distanceLimit = this.baseWidth * 6;
         this.spring = {
             stiffness: 0.3,
@@ -28,7 +26,6 @@ class MacOSDock {
         this.dockEl = document.createElement('div');
         this.dockEl.className = 'dock-el';
         
-        // Dock applications (modify as needed)
         const apps = [
             { id: 'finder', name: 'Finder', icon: 'icons/finder.png' },
             { id: 'safari', name: 'Safari', icon: 'icons/safari.png' },
@@ -40,7 +37,6 @@ class MacOSDock {
             { id: 'system', name: 'System Preferences', icon: 'icons/system.png' }
         ];
         
-        // Create dock items
         apps.forEach(app => {
             const dockItem = document.createElement('div');
             dockItem.className = 'dock-item';
@@ -63,7 +59,6 @@ class MacOSDock {
             dockItem.appendChild(button);
             this.dockEl.appendChild(dockItem);
             
-            // Store reference for animation
             this.icons.push({
                 element: img,
                 targetWidth: this.baseWidth,
@@ -72,23 +67,30 @@ class MacOSDock {
             });
         });
         
-        // Add separator and trash (optional)
         const separator = document.createElement('div');
         separator.className = 'dock-separator';
         this.dockEl.appendChild(separator);
         
         const trashItem = document.createElement('div');
         trashItem.className = 'dock-item';
-        trashItem.innerHTML = `
-            <button class="dock-button" data-app="trash">
-                <img src="icons/trash.png" alt="Trash">
-                <div class="dock-tooltip">Trash</div>
-            </button>
-        `;
+        const trashButton = document.createElement('button');
+        trashButton.className = 'dock-button';
+        trashButton.dataset.app = 'trash';
+        
+        const trashImg = document.createElement('img');
+        trashImg.src = 'icons/trash.png';
+        trashImg.alt = 'Trash';
+        trashImg.draggable = false;
+        
+        const trashTooltip = document.createElement('div');
+        trashTooltip.className = 'dock-tooltip';
+        trashTooltip.textContent = 'Trash';
+        
+        trashButton.appendChild(trashImg);
+        trashButton.appendChild(trashTooltip);
+        trashItem.appendChild(trashButton);
         this.dockEl.appendChild(trashItem);
         
-        // Add trash icon to animation array
-        const trashImg = trashItem.querySelector('img');
         this.icons.push({
             element: trashImg,
             targetWidth: this.baseWidth,
@@ -100,20 +102,17 @@ class MacOSDock {
     }
     
     setupEventListeners() {
-        // Track mouse position
         this.dockEl.addEventListener('mousemove', (e) => {
             this.mouseX = e.clientX;
         });
         
         this.dockEl.addEventListener('mouseleave', () => {
             this.mouseX = null;
-            // Reset all icons to base size
             this.icons.forEach(icon => {
                 icon.targetWidth = this.baseWidth;
             });
         });
         
-        // Handle clicks
         this.dockEl.addEventListener('click', (e) => {
             if (e.target.closest('.dock-button')) {
                 const button = e.target.closest('.dock-button');
@@ -129,22 +128,16 @@ class MacOSDock {
         const icon = this.icons[iconIndex];
         const rect = icon.element.getBoundingClientRect();
         const iconCenterX = rect.left + rect.width / 2;
-        
-        // Distance from mouse to icon center
         const distance = Math.abs(this.mouseX - iconCenterX);
         
-        // If too far, return base width
         if (distance > this.distanceLimit) return this.baseWidth;
         
-        // Calculate scale based on distance (closer = larger)
-        // This creates the magnification curve
         const normalizedDistance = distance / this.distanceLimit;
-        const scale = 1 + (1 - normalizedDistance) * 1.5; // Max 2.5x scale
+        const scale = 1 + (1 - normalizedDistance) * 1.5;
         
         return this.baseWidth * Math.min(scale, 2.5);
     }
     
-    // Spring physics animation
     animateIcon(icon) {
         const force = (icon.targetWidth - icon.currentWidth) * this.spring.stiffness;
         const damping = -icon.velocity * this.spring.damping;
@@ -152,28 +145,21 @@ class MacOSDock {
         icon.velocity += force + damping;
         icon.currentWidth += icon.velocity;
         
-        // Apply width with sub-pixel precision
         icon.element.style.width = `${icon.currentWidth}px`;
         icon.element.style.height = `${icon.currentWidth}px`;
     }
     
     animate() {
-        // Update target widths based on mouse position
         this.icons.forEach((icon, index) => {
             icon.targetWidth = this.calculateTargetWidth(index);
             this.animateIcon(icon);
         });
         
-        // Continue animation loop
         requestAnimationFrame(() => this.animate());
     }
     
     launchApp(appId) {
         console.log(`Launching: ${appId}`);
-        // Add your app launch logic here
-        // For example: openWindow(appId);
-        
-        // Visual feedback
         const button = this.dockEl.querySelector(`[data-app="${appId}"]`);
         if (button) {
             const img = button.querySelector('img');
@@ -185,7 +171,6 @@ class MacOSDock {
     }
 }
 
-// Initialize dock when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.macOSDock = new MacOSDock('dockContainer');
-}); 
+});
