@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macOS Web Emulator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Desktop Background & Icons Area -->
+    <div class="desktop">
+        <!-- You can add desktop icons here later -->
+        <div class="icon" style="top: 100px; left: 100px;">
+            <i class="fas fa-folder"></i>
+            <span>Documents</span>
+        </div>
+    </div>
+
+    <!-- Menu Bar (Simplified) -->
+    <div class="menu-bar">
+        <div class="apple-menu">
+            <i class="fab fa-apple"></i>
+        </div>
+        <div class="menu-item">Finder</div>
+        <div class="menu-item">File</div>
+        <div class="menu-item">Edit</div>
+        <div class="menu-item">View</div>
+        <div class="menu-item">Window</div>
+        <div class="menu-item">Help</div>
+        <div class="status-area">
+            <span id="time">10:00 AM</span>
+        </div>
+    </div>
+
+    <!-- Dock Container - Will be populated by JavaScript -->
+    <div class="dock-container" id="dockContainer"></div>
+
+    <!-- Scripts -->
+    <script src="dock.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
